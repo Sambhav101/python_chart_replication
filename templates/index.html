@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      media="print"
+      href="{{ url_for('static', filename='css/print.css') }}"
+    />
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script> -->
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Table Reproduction</h1>
+    <table border="1" , frame="void" id="styledTable">
+      <tr class="header">
+        <th class="priscilla_logo" colspan="{{ headers|length + 2 }}">
+          <img src="/static/images/priscilla_logo.png" width="64" height="64" />
+        </th>
+      </tr>
+      <tr>
+        <th></th>
+        <th></th>
+        {% for header in headers %}
+        <th>
+          <img src="/static/images/{{ header }}.png" />
+          <figcaption>{{ header }}</figcaption>
+        </th>
+        {% endfor %}
+      </tr>
+      {% for row in rows %}
+      <tr>
+        <td class="mbit">{{ row }} Mbit/s</td>
+        <td>
+          <ul style="list-style: none;">
+            <li>Tarif</li>
+            <li>Mbit/s</li>
+            <li>Promotion Preis</li>
+            <li>Promo Months</li>
+            <li>Grundgebühr</li>
+            <li>Upfront Tota</li>
+            <li>Monatlicher Durchschnittspreis</li>
+          </ul>
+        </td>
+        {% for val in get_data(data, headers, row) %} {% if val == 0 %}
+        <td></td>
+        {% else %}
+        <td>
+          <ul style="list-style: none;">
+            <li class="plan_name">{{ val['plan_name'] }}</li>
+            <li>{{ val['download_speed'] }}</li>
+            <li>{{ val['monthly_price'] }}</li>
+            <li>{{ val['promo_months'] }}</li>
+            <li>{{ val['regular_price'] }}</li>
+            <li>{{ val['upfront_charge'] }}</li>
+            <li class="avg_price">{{ val['two_year_cost'] }}</li>
+          </ul>
+        </td>
+        {% endif %} {% endfor %}
+      </tr>
+      {% endfor %}
+      <tr class="footer">
+        <td colspan="{{ headers|length + 1 }}" class="tef_logo">
+          <img src="/static/images/IK_TEF_Logo.svg" width="64" height="64" />
+        </td>
+        <td class="oc_logo">
+          <img src="/static/images/oclogo.png" width="64" height="64" />
+        </td>
+      </tr>
+    </table>
+    <button onclick="window.print()">Export</button>
+    <!-- <script>
+      function Export() {
+        html2canvas(document.querySelector("#styledTable"), {
+          letterRendering: 1,
+          allowTaint: true,
+          useCORS: true,
+          onrendered: function (canvas) {
+            const imgData = canvas.toDataURL("image/png");
+            var doc = new jspdf.jsPDF("l", "mm", [400, 300]);
+            doc.addImage(imgData, "PNG", 30, 30);
+            doc.save("foo.pdf");
+          },
+        });
+      }
+    </script> -->
+    <!-- <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"
+    ></script>
+    <script type="text/javascript">
+      function Export() {
+        html2canvas(document.getElementById("styledTable"), {
+          onrendered: function (canvas) {
+            var data = canvas.toDataURL();
+            var docDefinition = {
+              pageOrientation: "landscape",
+              pageMargins: [0, 0, 0, 0],
+              content: [
+                {
+                  image: data,
+                  width: 800,
+                },
+              ],
+            };
+            pdfMake.createPdf(docDefinition).download("Table.pdf");
+          },
+        });
+      }
+    </script> -->
+  </body>
+</html>
